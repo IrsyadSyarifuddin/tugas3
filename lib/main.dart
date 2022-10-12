@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'models/product.dart';
+import 'models/cart.dart';
 
 import 'ui/shopping_cart/index.dart';
 import 'ui/catalog/index.dart';
 import 'ui/product_detail/index.dart';
-import 'models/product.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+        create: (context) => Cart(),
+        child: const MyApp(),
+    )
+  );
+
 }
 
 class MyApp extends StatelessWidget {

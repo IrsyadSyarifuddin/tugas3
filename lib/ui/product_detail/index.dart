@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter4/models/product.dart';
 
+import 'package:provider/provider.dart';
+import 'package:flutter4/models/cart.dart';
+
 class ProductDetailPage extends StatelessWidget{
   const ProductDetailPage ({Key? key, required this.product}) : super(key: key);
 
@@ -69,7 +72,10 @@ class ProductDetailPage extends StatelessWidget{
         ConstrainedBox(
             constraints: const BoxConstraints.expand(),
             child: TextButton.icon(
-                onPressed: (){},
+                onPressed: () {
+                  Provider.of<Cart>(context, listen: false).addToCart(product);
+                  Navigator.pushNamed(context, '/shopping_cart');
+                },
                 icon: const Icon(Icons.shopping_cart_outlined),
                 label: const Text('Add to Cart'),
                 style: TextButton.styleFrom(

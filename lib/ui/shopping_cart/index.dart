@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter4/models/cart.dart';
 
-import 'package:flutter4/models/product.dart';
+import 'package:provider/provider.dart';
 
 
 class ShoppingCartPage extends StatefulWidget {
@@ -27,14 +28,14 @@ class _ShoppingCartState extends State<ShoppingCartPage>{
   //  'assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg'
   //];
 
-  late List<Product> items = [
-    Product(id: '1', name: 'Item 1', price: 10000, image: 'assets/gambar1.jpg'),
-    Product(id: '2', name: 'Item 2', price: 20000, image: 'assets/gambar2.jpg'),
-    Product(id: '3', name: 'Item 3', price: 10000, image: 'assets/gambar1.jpg'),
-    Product(id: '4', name: 'Item 4', price: 20000, image: 'assets/gambar2.jpg'),
-    Product(id: '5', name: 'Item 5', price: 10000, image: 'assets/gambar1.jpg'),
-    Product(id: '6', name: 'Item 6', price: 20000, image: 'assets/gambar2.jpg')
-  ];
+  //late List<Product> items = [
+  //  Product(id: '1', name: 'Item 1', price: 10000, image: 'assets/gambar1.jpg'),
+  //  Product(id: '2', name: 'Item 2', price: 20000, image: 'assets/gambar2.jpg'),
+  //  Product(id: '3', name: 'Item 3', price: 10000, image: 'assets/gambar1.jpg'),
+  //  Product(id: '4', name: 'Item 4', price: 20000, image: 'assets/gambar2.jpg'),
+  //  Product(id: '5', name: 'Item 5', price: 10000, image: 'assets/gambar1.jpg'),
+  //  Product(id: '6', name: 'Item 6', price: 20000, image: 'assets/gambar2.jpg')
+  //];
 
   @override
   Widget build(BuildContext context) {
@@ -49,38 +50,34 @@ class _ShoppingCartState extends State<ShoppingCartPage>{
         ),
         title: const Text('Shopping Cart'),
       ),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            child: Column(
-              children: [
-                ListTile(
-                  title: Text(items[index].name),
-                  leading: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        items.removeAt(index);
-                      });
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                  subtitle: Text(
-                      'Rp${items[index].price}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold
+      body: Consumer<Cart>(
+        builder: (BuildContext context, Cart cart, Widget? child){
+          return ListView.builder(
+            itemCount: cart.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(cart.items[index].product.name),
+                      leading: Image.asset(
+                        cart.items[index].product.image,
+                        height: 56.0,
+                        width: 56.0,
+                        fit: BoxFit.cover,
                       ),
-                  ),
-                  trailing: Image.asset(
-                    items[index].image,
-                    height: 56.0,
-                    width: 56.0,
-                    fit: BoxFit.cover,
-                  ),
+                      subtitle: Text(
+                        'Rp${cart.items[index].product.price}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                    ShoppingCartItemQty(index: index),
+                  ],
                 ),
-                const ShoppingCartItemQty()
-              ],
-            ),
+              );
+            },
           );
         },
       ),
@@ -88,42 +85,39 @@ class _ShoppingCartState extends State<ShoppingCartPage>{
   }
 }
 
-class ShoppingCartItemQty extends StatefulWidget {
-  const ShoppingCartItemQty ({Key? key}) : super(key: key);
+class ShoppingCartItemQty extends StatelessWidget {
+  const ShoppingCartItemQty ({Key? key, required this.index}) : super(key: key);
 
-  @override
-  State<StatefulWidget> createState() => _ShoppingCartItemQtyState();
-}
+  final int index;
 
-class _ShoppingCartItemQtyState extends State<ShoppingCartItemQty> {
-  int _qty = 1;
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         IconButton(
             onPressed: () {
-              setState(() {
-                _qty = 0;
-              });
+              Provider.of<Cart>(context, listen: false).removeFromCart(index);
             },
             icon: const Icon(Icons.delete)
         ),
         IconButton(
             onPressed: () {
-              setState(() {
-                if (_qty > 1) _qty--;
-              });
+              Provider.of<Cart>(context, listen: false).decItemQty(index);
               },
             icon: const Icon(Icons.remove)
         ),
-        Text('$_qty'),
+        Selector<Cart, int>(
+            builder: (BuildContext context, int qty, Widget? child){
+              return Text('$qty');
+            },
+            selector: (BuildContext context, Cart cart){
+              return cart.items[index].qty;
+            }
+        ),
         IconButton(
             onPressed: () {
-              setState(() {
-                _qty++;
-              });
+              Provider.of<Cart>(context, listen: false).incItemQty(index);
             },
             icon: const Icon(Icons.add))
       ],
