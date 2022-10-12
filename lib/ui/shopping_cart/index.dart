@@ -13,30 +13,6 @@ class ShoppingCartPage extends StatefulWidget {
 
 class _ShoppingCartState extends State<ShoppingCartPage>{
 
-  //final List<String> items = [
-  //  'Item 1','Item 2','Item 3','Item 4','Item 5',
-  //  'Item 6','Item 7','Item 8','Item 9','Item 10'
-  //];
-
-  // final List<int> prices = [
-  //  100000,200000,300000,400000,500000,
-  //  600000,700000,800000,900000,1000000
-  //];
-
-  //final List<String> images = [
-  //  'assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg',
-  //  'assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg','assets/gambar2.jpg','assets/gambar1.jpg'
-  //];
-
-  //late List<Product> items = [
-  //  Product(id: '1', name: 'Item 1', price: 10000, image: 'assets/gambar1.jpg'),
-  //  Product(id: '2', name: 'Item 2', price: 20000, image: 'assets/gambar2.jpg'),
-  //  Product(id: '3', name: 'Item 3', price: 10000, image: 'assets/gambar1.jpg'),
-  //  Product(id: '4', name: 'Item 4', price: 20000, image: 'assets/gambar2.jpg'),
-  //  Product(id: '5', name: 'Item 5', price: 10000, image: 'assets/gambar1.jpg'),
-  //  Product(id: '6', name: 'Item 6', price: 20000, image: 'assets/gambar2.jpg')
-  //];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +57,7 @@ class _ShoppingCartState extends State<ShoppingCartPage>{
           );
         },
       ),
+      bottomNavigationBar: const ShoppingCartTotal(),
     );
   }
 }
@@ -123,4 +100,58 @@ class ShoppingCartItemQty extends StatelessWidget {
       ],
     );
   }
+}
+
+class ShoppingCartTotal extends StatelessWidget{
+  const ShoppingCartTotal ({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Colors.tealAccent.shade400)
+        )
+      ),
+      child: Consumer<Cart>(
+        builder: (BuildContext context, Cart cart, Widget? child){
+          return ListTile(
+            title: const Text(
+              'Total Price',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black
+              ),
+            ),
+            subtitle: Text(
+                'Rp${cart.totalPrice}',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
+                ),
+            ),
+            trailing: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: 150
+              ),
+              child: TextButton(
+                  onPressed: cart.items.isNotEmpty
+                      ? () {}
+                      : null,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: cart.items.isNotEmpty
+                      ? Colors.tealAccent.shade700
+                      : Colors.grey.shade400
+                  ),
+                  child: const Text('Checkout'),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
 }
