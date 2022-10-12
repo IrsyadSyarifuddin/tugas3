@@ -75,7 +75,7 @@ class HttpExamplePage extends StatelessWidget{
 
   Future<List<TodoItem>> getTodos() async{
     Response res = await get(Uri.http(
-      'https://jsonplaceholder.typicode.com/todos','/todos'
+      'jsonplaceholder.typicode.com','/todos'
     ));
     if(res.statusCode==200){
       List<dynamic> body = jsonDecode(res.body);
